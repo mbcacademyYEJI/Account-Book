@@ -1,0 +1,143 @@
+{
+  "id": "rabbit",
+  "name": "토끼",
+  "title": "Rabbit",
+  "spritesheet": "rabbit_spritesheet.png",
+  "original": "original.png",
+  "columns": 4,
+  "rows": 4,
+  "frameWidth": 256,
+  "frameHeight": 256,
+  "sheetWidth": 1024,
+  "sheetHeight": 1024,
+  "directions": [
+    "down",
+    "left",
+    "right",
+    "up"
+  ],
+  "framesPerDirection": 4,
+  "frameOrder": [
+    "contact-left",
+    "passing",
+    "contact-right",
+    "passing"
+  ],
+  "suggestedFps": 8,
+  "anchor": "bottom-center",
+  "background": "transparent",
+  "frames": [
+    {
+      "file": "frames/down_0.png",
+      "direction": "down",
+      "index": 0,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "file": "frames/down_1.png",
+      "direction": "down",
+      "index": 1,
+      "x": 256,
+      "y": 0
+    },
+    {
+      "file": "frames/down_2.png",
+      "direction": "down",
+      "index": 2,
+      "x": 512,
+      "y": 0
+    },
+    {
+      "file": "frames/down_3.png",
+      "direction": "down",
+      "index": 3,
+      "x": 768,
+      "y": 0
+    },
+    {
+      "file": "frames/left_0.png",
+      "direction": "left",
+      "index": 0,
+      "x": 0,
+      "y": 256
+    },
+    {
+      "file": "frames/left_1.png",
+      "direction": "left",
+      "index": 1,
+      "x": 256,
+      "y": 256
+    },
+    {
+      "file": "frames/left_2.png",
+      "direction": "left",
+      "index": 2,
+      "x": 512,
+      "y": 256
+    },
+    {
+      "file": "frames/left_3.png",
+      "direction": "left",
+      "index": 3,
+      "x": 768,
+      "y": 256
+    },
+    {
+      "file": "frames/right_0.png",
+      "direction": "right",
+      "index": 0,
+      "x": 0,
+      "y": 512
+    },
+    {
+      "file": "frames/right_1.png",
+      "direction": "right",
+      "index": 1,
+      "x": 256,
+      "y": 512
+    },
+    {
+      "file": "frames/right_2.png",
+      "direction": "right",
+      "index": 2,
+      "x": 512,
+      "y": 512
+    },
+    {
+      "file": "frames/right_3.png",
+      "direction": "right",
+      "index": 3,
+      "x": 768,
+      "y": 512
+    },
+    {
+      "file": "frames/up_0.png",
+      "direction": "up",
+      "index": 0,
+      "x": 0,
+      "y": 768
+    },
+    {
+      "file": "frames/up_1.png",
+      "direction": "up",
+      "index": 1,
+      "x": 256,
+      "y": 768
+    },
+    {
+      "file": "frames/up_2.png",
+      "direction": "up",
+      "index": 2,
+      "x": 512,
+      "y": 768
+    },
+    {
+      "file": "frames/up_3.png",
+      "direction": "up",
+      "index": 3,
+      "x": 768,
+      "y": 768
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "format": "4x4 pixel-art walk sprite sheet",
+  "rows": [
+    {
+      "direction": "down",
+      "row": 0
+    },
+    {
+      "direction": "left",
+      "row": 1
+    },
+    {
+      "direction": "right",
+      "row": 2
+    },
+    {
+      "direction": "up",
+      "row": 3
+    }
+  ],
+  "framesPerRow": 4,
+  "suggestedFps": 8,
+  "characters": [
+    {
+      "id": "mouse",
+      "name": "생쥐",
+      "title": "Mouse",
+      "zip": "mouse.zip"
+    },
+    {
+      "id": "cow",
+      "name": "소",
+      "title": "Cow",
+      "zip": "cow.zip"
+    },
+    {
+      "id": "cat",
+      "name": "고양이",
+      "title": "Cat",
+      "zip": "cat.zip"
+    },
+    {
+      "id": "rabbit",
+      "name": "토끼",
+      "title": "Rabbit",
+      "zip": "rabbit.zip"
+    },
+    {
+      "id": "dragon",
+      "name": "용",
+      "title": "Dragon",
+      "zip": "dragon.zip"
+    },
+    {
+      "id": "sheep",
+      "name": "양",
+      "title": "Sheep",
+      "zip": "sheep.zip"
+    },
+    {
+      "id": "squirrel",
+      "name": "다람쥐",
+      "title": "Squirrel",
+      "zip": "squirrel.zip"
+    },
+    {
+      "id": "frog",
+      "name": "개구리",
+      "title": "Frog",
+      "zip": "frog.zip"
+    },
+    {
+      "id": "monkey",
+      "name": "원숭이",
+      "title": "Monkey",
+      "zip": "monkey.zip"
+    },
+    {
+      "id": "chicken",
+      "name": "닭",
+      "title": "Chicken",
+      "zip": "chicken.zip"
+    },
+    {
+      "id": "dog",
+      "name": "강아지",
+      "title": "Dog",
+      "zip": "dog.zip"
+    },
+    {
+      "id": "pig",
+      "name": "돼지",
+      "title": "Pig",
+      "zip": "pig.zip"
+    }
+  ]
+}
