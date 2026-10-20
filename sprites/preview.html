@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>캐릭터 스프라이트 시트</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      background: #171a22;
+      color: #f3efe6;
+      font-family: "Pretendard", "Noto Sans KR", sans-serif;
+    }
+    header { padding: 20px 24px 8px; }
+    h1 { margin: 0 0 6px; font-size: 22px; }
+    p { margin: 0; color: #b7b1a6; font-size: 14px; }
+    .controls { display: flex; gap: 8px; padding: 14px 24px 18px; flex-wrap: wrap; }
+    button {
+      background: #2c3140;
+      color: inherit;
+      border: 1px solid #43495c;
+      border-radius: 999px;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    button.active { background: #efe7d6; color: #1b1e27; border-color: #efe7d6; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+      padding: 0 24px 32px;
+    }
+    .card { background: #232836; border-radius: 14px; padding: 10px 10px 12px; }
+    .stage {
+      height: 168px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 10px;
+      background:
+        repeating-conic-gradient(#3c4254 0% 25%, #313747 0% 50%) 50% / 16px 16px;
+    }
+    .sprite {
+      width: 256px;
+      height: 256px;
+      background-repeat: no-repeat;
+      animation: walk 0.48s steps(4) infinite;
+      transform: scale(0.58);
+      transform-origin: bottom center;
+      image-rendering: pixelated;
+    }
+    .name { margin: 8px 0 0; text-align: center; font-size: 14px; }
+    @keyframes walk {
+      from { background-position-x: 0; }
+      to { background-position-x: -1024px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>캐릭터 스프라이트 시트</h1>
+    <p>4방향 걷기, 방향마다 4프레임. 가로 1024, 세로 1024, 칸 크기 256.</p>
+  </header>
+  <div class="controls">
+    <button type="button" data-dir="down" class="active">앞</button>
+    <button type="button" data-dir="left">왼쪽</button>
+    <button type="button" data-dir="right">오른쪽</button>
+    <button type="button" data-dir="up">뒤</button>
+  </div>
+  <div class="grid" id="grid"></div>
+  <script>
+    const characters = [
+      ["mouse", "생쥐"],
+      ["cow", "소"],
+      ["cat", "고양이"],
+      ["rabbit", "토끼"],
+      ["dragon", "용"],
+      ["sheep", "양"],
+      ["squirrel", "다람쥐"],
+      ["frog", "개구리"],
+      ["monkey", "원숭이"],
+      ["chicken", "닭"],
+      ["dog", "강아지"],
+      ["pig", "돼지"]
+    ];
+    const rows = { down: 0, left: 1, right: 2, up: 3 };
+    const grid = document.getElementById("grid");
+    for (const [id, name] of characters) {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.innerHTML = '<div class="stage"><div class="sprite"></div></div><p class="name"></p>';
+      const sprite = card.querySelector(".sprite");
+      sprite.style.backgroundImage = `url("${id}/${id}_spritesheet.png")`;
+      sprite.dataset.row = "1";
+      card.querySelector(".name").textContent = name;
+      grid.appendChild(card);
+    }
+    function setDirection(dir) {
+      const y = -256 * rows[dir];
+      document.querySelectorAll(".sprite").forEach((sprite) => {
+        sprite.style.backgroundPositionY = y + "px";
+      });
+      document.querySelectorAll("button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.dir === dir);
+      });
+    }
+    document.querySelector(".controls").addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (button) setDirection(button.dataset.dir);
+    });
+    setDirection("left");
+  </script>
+</body>
+</html>
