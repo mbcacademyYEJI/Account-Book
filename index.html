@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>처음의 자리</title>
+  <meta name="description" content="기억이 없는 아침의 여덟 장면. 선택 하나가 다음 문장을 바꾸고, 여덟 걸음이 동물 하나의 결로 모입니다." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #101410;
+      --bg-2: #171c18;
+      --bg-3: #1e2520;
+      --ink: #f0e8d8;
+      --muted: #b7b09f;
+      --faint: #8c8778;
+      --line: #2c352f;
+      --accent: #c9a56a;
+      --accent-2: #8aa37a;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Noto Sans KR", sans-serif;
+      background:
+        radial-gradient(1200px 500px at 50% -10%, #243028 0%, transparent 62%),
+        radial-gradient(800px 420px at 100% 100%, #1a221c 0%, transparent 50%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.7;
+    }
+
+    .page {
+      width: min(720px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 80px;
+    }
+
+    h1, h2, h3, .serif { font-family: "Noto Serif KR", serif; }
+
+    .eyebrow {
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 11px;
+      color: var(--accent);
+      margin: 0 0 10px;
+    }
+
+    .title {
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: 700;
+      line-height: 1.25;
+      margin: 0 0 12px;
+    }
+
+    .lede {
+      color: var(--muted);
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .panel {
+      margin-top: 28px;
+      background: color-mix(in srgb, var(--bg-2) 92%, white 8%);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px 24px;
+    }
+
+    .progress {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 22px;
+    }
+    .progress span {
+      flex: 1;
+      height: 3px;
+      border-radius: 99px;
+      background: var(--line);
+    }
+    .progress span.on { background: var(--accent); }
+    .progress span.done { background: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+
+    .scene-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--faint);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .lead {
+      font-family: "Noto Serif KR", serif;
+      font-style: italic;
+      color: var(--muted);
+      margin: 0 0 16px;
+    }
+
+    .ask {
+      font-family: "Noto Serif KR", serif;
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.6;
+      margin: 0 0 22px;
+    }
+
+    .choices { display: grid; gap: 10px; }
+
+    .choice {
+      appearance: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      background: var(--bg-3);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      font: inherit;
+      line-height: 1.65;
+      transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+    }
+    .choice:hover {
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+      transform: translateY(-1px);
+    }
+    .choice.active {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--bg-3) 82%, var(--accent) 18%);
+    }
+    .choice .mark {
+      display: inline-block;
+      min-width: 1.6em;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button.btn {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font: inherit;
+      cursor: pointer;
+    }
+    button.btn:disabled { opacity: 0.4; cursor: default; }
+    button.btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #1a160f;
+      font-weight: 600;
+    }
+    button.btn.ghost { color: var(--muted); }
+
+    .intro-actions { margin-top: 28px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .note {
+      margin-top: 18px;
+      color: var(--faint);
+      font-size: 13px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 22px 0;
+    }
+    .stat {
+      background: var(--bg-3);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .stat b {
+      display: block;
+      font-size: 22px;
+      font-family: "Noto Serif KR", serif;
+    }
+    .stat span { color: var(--faint); font-size: 12px; }
+
+    .portrait-head { margin-bottom: 8px; }
+    .animal {
+      font-size: clamp(34px, 7vw, 52px);
+      margin: 0;
+      line-height: 1.2;
+    }
+    .epithet {
+      margin: 6px 0 0;
+      color: var(--accent);
+      font-size: 18px;
+    }
+    .code {
+      color: var(--faint);
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      margin-top: 8px;
+    }
+
+    .block { margin-top: 22px; }
+    .block h2 {
+      font-size: 15px;
+      letter-spacing: 0.12em;
+      color: var(--accent-2);
+      margin: 0 0 8px;
+    }
+    .block p { margin: 0; color: var(--ink); }
+
+    .list {
+      margin-top: 16px;
+      display: grid;
+      gap: 10px;
+    }
+    .list p { margin: 0; }
+    .list strong { color: var(--accent); font-weight: 600; }
+
+    .animals {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .animals button {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: var(--bg-3);
+      color: var(--ink);
+      border-radius: 10px;
+      padding: 8px 6px;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .animals button.mine {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--bg-3) 80%, var(--accent) 20%);
+    }
+
+    .callout {
+      margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hidden { display: none; }
+    .fade { animation: fade 0.35s ease; }
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 640px) {
+      .page { width: min(100% - 24px, 720px); padding-top: 24px; }
+      .panel { padding: 22px 16px; }
+      .ask { font-size: 18px; }
+      .stats, .animals { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section id="intro" class="fade">
+      <p class="eyebrow">THE FIRST PLACE</p>
+      <h1 class="title">처음의 자리</h1>
+      <p class="lede">어느 날, 당신은 자신이 여기 있다는 것을 압니다. 이름은 아직 없고, 기억도 없습니다. 여덟 장면마다 가장 가까운 하나를 고르면, 선택 하나가 다음 문장을 바꾸고 걸음이 동물 하나의 결로 모입니다.</p>
+      <div class="intro-actions">
+        <button class="btn primary" type="button" id="start-btn">첫 장면을 엽니다</button>
+        <button class="btn ghost" type="button" id="browse-btn">열여섯 결만 봅니다</button>
+      </div>
+      <p class="note">옳은 답은 없습니다. 결과는 성향의 기울기이지, 진단이 아닙니다.</p>
+    </section>
+
+    <section id="quiz" class="hidden">
+      <div class="progress" id="progress" aria-hidden="true"></div>
+      <div class="panel fade" id="quiz-panel">
+        <div class="scene-meta">
+          <span id="scene-label"></span>
+          <span id="axis-label"></span>
+        </div>
+        <p class="lead hidden" id="lead"></p>
+        <p class="ask" id="ask"></p>
+        <div class="choices" id="choices"></div>
+        <div class="nav">
+          <button class="btn ghost" type="button" id="prev-btn">이전 장면</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="result" class="hidden">
+      <div class="panel fade" id="result-panel"></div>
+    </section>
+  </main>
+
+  <script>
+    const MARKS = ["가", "나", "다", "라"];
+    const CODES = [
+      "ISTJ", "ISFJ", "INFJ", "INTJ",
+      "ISTP", "ISFP", "INFP", "INTP",
+      "ESTP", "ESFP", "ENFP", "ENTP",
+      "ESTJ", "ESFJ", "ENFJ", "ENTJ"
+    ];
+
+    const QUESTIONS = [
+      {
+        scene: "빈자리",
+        axis: "주의 · 밖/안",
+        ask: "어느 날, 당신은 자신이 여기 있다는 것을 알았습니다. 공간을 유영하던 당신은 문득, 불러올 기억이 하나도 없다는 것을 깨달았습니다. 이름도, 왔던 곳도, 그리운 얼굴도 없습니다. 그 빈자리에서 먼저 올라오는 마음은 무엇입니까?",
+        leads: null,
+        choices: [
+          { text: "가슴이 뛰고, 누군가 혹은 무언가가 밖에 있기를 바라며 마음이 먼저 나갑니다.", pole: "E", weight: 2 },
+          { text: "신기합니다. 이 상태가 무엇인지, 바깥의 반응을 확인해 보고 싶어집니다.", pole: "E", weight: 1 },
+          { text: "조용히 가라앉습니다. 서두르지 않고 이 감각을 혼자 충분히 느껴 보고 싶습니다.", pole: "I", weight: 1 },
+          { text: "오히려 평온합니다. 비어 있는 안쪽으로 주의가 모여, 자신의 숨이 먼저 들립니다.", pole: "I", weight: 2 }
+        ]
+      },
+      {
+        scene: "감은 몸",
+        axis: "생활 · 매듭/열어둠",
+        ask: "손끝과 무게와 숨만으로, 당신은 어떻게 움직이겠습니까?",
+        leads: [
+          "밖으로 뛰는 가슴을 안은 채, 당신은 몸을 움직여 보기로 합니다. 아직 눈은 감겨 있습니다.",
+          "확인하고 싶은 마음을 안은 채, 당신은 몸을 움직여 보기로 합니다. 아직 눈은 감겨 있습니다.",
+          "가라앉은 마음을 깨지 않은 채, 당신은 천천히 몸을 움직여 보기로 합니다. 아직 눈은 감겨 있습니다.",
+          "안쪽에 모인 주의를 유지한 채, 당신은 숨을 기준으로 몸을 움직여 보기로 합니다. 아직 눈은 감겨 있습니다."
+        ],
+        choices: [
+          { text: "손가락, 손목, 어깨 순으로 하나씩 움직여, 몸이 어디까지 되는지 확인합니다.", pole: "J", weight: 2 },
+          { text: "숨을 고르고 갈 쪽을 정한 다음, 한 걸음만 내딛습니다.", pole: "J", weight: 1 },
+          { text: "방향을 정하지 않고, 몸이 기울어지는 쪽으로 팔을 뻗어 따라가 봅니다.", pole: "P", weight: 1 },
+          { text: "차례를 만들지 않습니다. 돌고 기울며, 떠오르는 충동마다 몸을 맡겨 봅니다.", pole: "P", weight: 2 }
+        ]
+      },
+      {
+        scene: "첫 풍경",
+        axis: "인식 · 여기/너머",
+        ask: "당신이 눈을 뜨고 처음 보게 된 풍경은 어떤 풍경입니까?",
+        leads: [
+          "손가락부터 차례로 확인한 뒤, 당신은 눈을 뜹니다. 처음 보는 풍경이 하나 앞에 있습니다.",
+          "정한 방향으로 한 걸음을 둔 뒤, 당신은 눈을 뜹니다. 처음 보는 풍경이 하나 앞에 있습니다.",
+          "몸이 기울던 쪽에서, 당신은 눈을 뜹니다. 처음 보는 풍경이 하나 앞에 있습니다.",
+          "충동을 따라 움직임을 놓은 뒤, 당신은 눈을 뜹니다. 처음 보는 풍경이 하나 앞에 있습니다."
+        ],
+        choices: [
+          { text: "발아래 흙과 풀잎이 하나하나 보이는 들판. 바람의 온도와 발의 무게가 또렷합니다.", pole: "S", weight: 2 },
+          { text: "좁고 뚜렷한 오솔길. 다음 한 걸음이 바닥에 이미 놓여 있습니다.", pole: "S", weight: 1 },
+          { text: "빛과 안개가 겹친 숲. 보이는 나무보다, 그 뒤에 이어질 공간이 먼저 다가옵니다.", pole: "N", weight: 1 },
+          { text: "물결이 수평선에서 사라지는 해변. 발밑의 모래보다 저 너머가 더 크게 느껴집니다.", pole: "N", weight: 2 }
+        ]
+      },
+      {
+        scene: "마음의 기울기",
+        axis: "판단 · 기준/가치",
+        ask: "당신은 어떤 마음이 듭니까?",
+        leads: [
+          "들판의 풀이 발목에 스칩니다. 바람의 온도가 피부에 남습니다.",
+          "오솔길이 발 앞으로 이어집니다. 바닥의 흙이 다음 걸음을 보여 줍니다.",
+          "숲의 안개가 시야 끝에 머뭅니다. 나무 뒤의 공간이 아직 말을 걸지 않습니다.",
+          "파도가 수평선에서 갈라집니다. 모래보다 먼 선이 더 크게 남습니다."
+        ],
+        choices: [
+          { text: "차분해집니다. 이곳이 어떻게 이루어져 있는지, 사실부터 가려 보고 싶습니다.", pole: "T", weight: 2 },
+          { text: "긴장이 옵니다. 머무를지 움직일지, 이유와 결과를 따져 정하고 싶습니다.", pole: "T", weight: 1 },
+          { text: "마음의 온도가 먼저입니다. 이 자리가 나를 받아 주는지가 알고 싶습니다.", pole: "F", weight: 1 },
+          { text: "마음이 쓰입니다. 어딘가의 작은 생명이 다치지 않기를, 그것부터 헤아리고 싶습니다.", pole: "F", weight: 2 }
+        ]
+      },
+      {
+        scene: "기척",
+        axis: "주의 · 밖/안",
+        ask: "당신과 같은 숨은 아닌데, 멀지 않은 곳에서 온기가 움직입니다. 당신은 어떻게 합니까?",
+        leads: [
+          "사실을 가려 보려는 마음이 자리 잡을 무렵, 풍경 안에 기척이 있습니다.",
+          "이유를 따지려는 긴장이 남은 채, 풍경 안에 기척이 있습니다.",
+          "마음의 온도를 살피던 당신에게, 풍경 안의 기척이 먼저 닿습니다.",
+          "작은 생명을 헤아리던 마음에, 멀지 않은 온기가 응답하듯 움직입니다."
+        ],
+        choices: [
+          { text: "망설이지 않고 그쪽으로 걸어가, 자신이 여기 있음을 알립니다.", pole: "E", weight: 2 },
+          { text: "거리를 조금 좁히고, 상대가 반응하는지를 살피며 가까이 갑니다.", pole: "E", weight: 1 },
+          { text: "자리를 지키며 지켜봅니다. 충분히 알 때까지 먼저 나서지 않습니다.", pole: "I", weight: 1 },
+          { text: "한 걸음 물러나 공간을 남겨 둡니다. 다가가기보다 그 기척을 듣는 쪽이 편합니다.", pole: "I", weight: 2 }
+        ]
+      },
+      {
+        scene: "표식",
+        axis: "인식 · 여기/너머",
+        ask: "젖은 발자국, 꺾인 풀, 그리고 설명되지 않는 방향. 당신은 그 표식을 어떻게 읽습니까?",
+        leads: [
+          "당신이 다가가 자신이 여기 있음을 알리자, 기척은 모습을 다 보여 주지 않고 표식만 남깁니다.",
+          "거리를 좁혀 반응을 살피자, 기척은 모습을 다 보여 주지 않고 표식만 남깁니다.",
+          "당신이 지켜보는 동안, 기척은 모습을 다 보여 주지 않고 표식만 남깁니다.",
+          "당신이 공간을 남겨 두자, 기척은 모습을 다 보여 주지 않고 표식만 남깁니다."
+        ],
+        choices: [
+          { text: "발자국의 깊이, 풀이 꺾인 방향, 바람이 불어오는 쪽만 믿습니다. 보이는 것이 단서입니다.", pole: "S", weight: 2 },
+          { text: "흙을 만지고 온도를 비교하며, 방금 전에 있었던 일을 조각조각 조립합니다.", pole: "S", weight: 1 },
+          { text: "표식은 실마리일 뿐입니다. 그것들이 가리키는 이야기가 더 또렷합니다.", pole: "N", weight: 1 },
+          { text: "증거보다 먼저, 이유 없이 선명해지는 방향이 있습니다. 그 끌림을 따릅니다.", pole: "N", weight: 2 }
+        ]
+      },
+      {
+        scene: "갈림길",
+        axis: "판단 · 기준/가치",
+        ask: "한쪽은 짧고 뚜렷하여 이 세계의 끝에 곧 닿을 듯합니다. 다른 쪽은 돌아가지만, 그 끝에 힘이 빠진 작은 숨이 있습니다. 그대로 두면 곧 사라질 것 같습니다. 당신은 어느 쪽을 택합니까?",
+        leads: [
+          "보이는 단서를 따라가자, 길이 둘로 갈라집니다.",
+          "흙의 온도로 일을 조립하자, 길이 둘로 갈라집니다.",
+          "표식 뒤의 이야기를 읽자, 길이 둘로 갈라집니다.",
+          "끌림을 따라가자, 길이 둘로 갈라집니다."
+        ],
+        choices: [
+          { text: "짧고 뚜렷한 길입니다. 세계의 구조를 알아야 무엇도 도울 수 있습니다.", pole: "T", weight: 2 },
+          { text: "짧은 길에서 먼저 판단하고, 도울 수 있을 때만 돌아가겠습니다. 기준이 먼저입니다.", pole: "T", weight: 1 },
+          { text: "마음이 기울어집니다. 세계가 조금 늦게 알려져도, 그 숨이 있는 쪽으로 갑니다.", pole: "F", weight: 1 },
+          { text: "작은 숨 쪽으로 곧장 갑니다. 아는 것보다, 그 존재가 사라지지 않는 것이 중요합니다.", pole: "F", weight: 2 }
+        ]
+      },
+      {
+        scene: "밝아오는 하늘",
+        axis: "생활 · 매듭/열어둠",
+        ask: "이 자리가 앞으로 당신의 걸음이 될 수 있음을 압니다. 당신은 어떻게 매듭을 짓습니까?",
+        leads: [
+          "짧고 뚜렷한 길을 걸어 온 끝에서, 하늘이 밝아집니다.",
+          "기준을 세운 채 걸어 온 끝에서, 하늘이 밝아집니다.",
+          "마음이 기울어 돌아간 길의 끝에서, 하늘이 밝아집니다.",
+          "작은 숨 곁을 택한 길의 끝에서, 하늘이 밝아집니다."
+        ],
+        choices: [
+          { text: "머무를 자리와 다음 행동을 지금 정합니다. 정해지지 않은 채로 밝아지는 것이 불편합니다.", pole: "J", weight: 2 },
+          { text: "오늘의 순서와 갈 방향을 짧게 정해 두고, 움직이기 시작합니다.", pole: "J", weight: 1 },
+          { text: "정해 두지 않습니다. 밝아지는 쪽을 보며, 그 자리에서 다시 고릅니다.", pole: "P", weight: 1 },
+          { text: "매듭을 짓지 않습니다. 세계가 열리는 대로 두고, 걸음은 그때그때 바뀌어도 좋습니다.", pole: "P", weight: 2 }
+        ]
+      }
+    ];
+
+    const AXES = [
+      { name: "주의", left: "E", right: "I", leftName: "밖으로", rightName: "안으로", early: 0, late: 4 },
+      { name: "인식", left: "S", right: "N", leftName: "지금 여기", rightName: "너머", early: 2, late: 5 },
+      { name: "판단", left: "T", right: "F", leftName: "기준", rightName: "가치", early: 3, late: 6 },
+      { name: "생활", left: "J", right: "P", leftName: "매듭", rightName: "열어둠", early: 1, late: 7 }
+    ];
+
+    const PORTRAITS = {
+      ISTJ: {
+        animal: "거북",
+        epithet: "길을 외우는 발",
+        ending: "밝아오는 자리에서 당신은 발자국이 지워지지 않는 쪽에 몸을 둡니다. 흙의 무게, 바람의 방향, 다음에 올 한 걸음. 같은 순서로 다시 밟을 수 있을 때 비로소 안심합니다.",
+        read: "힘은 안에서 모으고, 세계는 지금 보이는 사실로 읽습니다. 판단은 인과와 기준이고, 한번 정한 순서는 쉽게 열지 않습니다. 기억은 감정의 파도가 아니라 절차로 남습니다.",
+        gift: "세부를 빠뜨리지 않는 지속, 말이 앞지르지 않는 실행.",
+        edge: "새 단서가 기존의 순서를 부정하면 수정을 늦춥니다. 돌봄이 기준 밖에 있으면 차갑게 들릴 수 있습니다.",
+        grow: "정해 둔 순서 안에, 표식 너머의 가능성 하나를 점검 항목으로 넣습니다."
+      },
+      ISFJ: {
+        animal: "사슴",
+        epithet: "조용히 지키는 숨",
+        ending: "당신은 꺾인 풀을 되돌리듯 주위를 살피고, 작은 숨이 편해지는 자리를 내일도 같은 곳에 남겨 둡니다. 기억은 사실의 목록이면서 동시에 누군가의 안부입니다.",
+        read: "안쪽에서 힘을 모으되, 기준은 존재의 안부에 있습니다. 구체적인 변화를 놓치지 않고, 한번 맡은 돌봄을 구조로 고정합니다.",
+        gift: "세심한 보호, 감각으로 남는 신뢰.",
+        edge: "거절 대신 자리를 지키다 자신의 한계를 늦게 말합니다.",
+        grow: "돌봄의 순서를 적기 전에, 자신의 숨이 어디 있는지 한 줄 먼저 적습니다."
+      },
+      INFJ: {
+        animal: "부엉이",
+        epithet: "어둠 속의 긴 시선",
+        ending: "당신은 안개 너머의 결말을 미리 보고, 작은 숨이 사라지지 않는 아침을 향해 조용히 걷습니다. 말수는 적고, 의미에는 오래 머뭅니다.",
+        read: "사실의 나열보다 패턴과 의미를 모으고, 그 의미를 가치로 판단한 뒤 하나의 방향으로 닫습니다.",
+        gift: "통찰, 일관된 신념, 멀리 두는 돌봄.",
+        edge: "확신이 보이는 표식보다 먼저 닫히면 다른 결말을 놓칩니다.",
+        grow: "직감으로 정한 결말을, 눈에 보이는 표식 두 개와 맞춰 봅니다."
+      },
+      INTJ: {
+        animal: "독수리",
+        epithet: "높은 곳의 설계",
+        ending: "수평선 너머를 한 장의 경로로 접은 뒤, 불필요한 굽이를 지우고 다음 하강을 정합니다. 온기보다 구조가 먼저 당신을 부릅니다.",
+        read: "고독 속에서 패턴을 설계하고, 논리로 걸러 길을 줄입니다. 결정은 빠르기보다 맞도록 닫힙니다.",
+        gift: "장기적인 구조, 독립성, 복잡한 풍경의 단순화.",
+        edge: "효율이 낮은 숨은 경로 밖으로 밀릴 수 있습니다.",
+        grow: "지도의 한 칸을, 돌아가야 하는 이유로 비워 둡니다."
+      },
+      ISTP: {
+        animal: "도마뱀",
+        epithet: "손끝으로 푸는 매듭",
+        ending: "당신은 말없이 흙의 온도를 재고, 막힌 곳을 손으로 풀어 둔 채 다음 아침의 순서는 정하지 않습니다. 세계가 문제를 던질 때마다 당신의 몸이 답이 됩니다.",
+        read: "안쪽에서 관찰하고, 구체적 감각으로 원인을 나누며, 논리로 고칩니다. 해결 뒤의 틀은 열어 둡니다.",
+        gift: "위기에서의 침착, 군더더기 없는 손재주.",
+        edge: "마음의 신호가 문제의 데이터로 들어오기 전에는 관계를 미룹니다.",
+        grow: "고친 뒤에, 누가 편해졌는지 한 번만 확인합니다."
+      },
+      ISFP: {
+        animal: "나비",
+        epithet: "지금 이 빛의 색",
+        ending: "빛의 결이 바뀌는 대로 당신은 날개를 기울입니다. 작은 숨 곁에 잠시 머물되, 그 머무름을 규칙으로 만들지는 않습니다. 오늘의 색이 오늘의 진실입니다.",
+        read: "감각의 결을 조용히 따라가고, 판단은 개인적 가치에 있습니다. 정해진 궤도보다 지금 이 순간의 일치가 중요합니다.",
+        gift: "진정성, 미감, 부드러운 존재감.",
+        edge: "불편한 구조를 미루다 선택이 흩어질 수 있습니다.",
+        grow: "마음에 드는 빛 하나를, 내일 아침까지 지키겠다는 짧은 약속으로 남깁니다."
+      },
+      INFP: {
+        animal: "고래",
+        epithet: "깊은 곳의 노래",
+        ending: "수평선 아래에서 당신은 사실보다 의미를 듣습니다. 작은 숨의 노래를 자신의 노래와 겹쳐 듣고, 물결이 바뀌면 길도 바꾸어 둡니다.",
+        read: "힘은 안쪽의 가치에서 오고, 세계는 가능성과 상징으로 열립니다. 판단은 의미의 일치이며, 형태는 그 가치가 살아있는 한 바뀌어도 됩니다.",
+        gift: "공감의 깊이, 이상, 이야기로 세계를 견디는 힘.",
+        edge: "시간이나 발자국의 깊이 같은 제약이 의미에 묻히면 걸음이 늦어집니다.",
+        grow: "노래와 함께, 오늘 밟을 모래의 범위를 하나로 정합니다."
+      },
+      INTP: {
+        animal: "까마귀",
+        epithet: "잠정적인 질문",
+        ending: "당신은 표식을 주워 간직하지 않고 분해합니다. 왜 발자국이 거기 있는지, 세계가 어떤 규칙으로 접히는지. 답은 언제나 잠정적이고, 그래서 당신은 자유롭습니다.",
+        read: "고독한 분석으로 패턴을 실험합니다. 논리적 일관성이 앞이고, 성급한 매듭을 불신합니다.",
+        gift: "정밀한 질문, 편견에 덜 묶인 재정의.",
+        edge: "이해가 끝날 때까지 행동을 미루고, 마음의 호소를 미완성 데이터로 둘 수 있습니다.",
+        grow: "잠정적인 답 하나를 골라, 하루만 그 답으로 걸어 봅니다."
+      },
+      ESTP: {
+        animal: "수달",
+        epithet: "먼저 들어가는 몸",
+        ending: "당신은 설명이 끝나기 전에 물가에 손을 담그고, 길의 바닥을 몸으로 확인합니다. 세계는 당신에게 이론이 아니라 현장입니다.",
+        read: "바깥 자극에서 힘이 나고, 지금 여기의 사실을 논리와 순발력으로 다룹니다. 계획은 상황이 움직인 뒤에 따라옵니다.",
+        gift: "대담함, 현실 감각, 위기에서의 즉시성.",
+        edge: "지금 통하는 수가 나중의 신뢰나 약한 존재를 깎을 수 있습니다.",
+        grow: "뛰어들기 전에 작은 숨의 위치를 한 번 훑습니다."
+      },
+      ESFP: {
+        animal: "돌고래",
+        epithet: "함께 튀는 물보라",
+        ending: "당신은 온기를 향해 다가가고, 자리의 감각을 누군가와 나누고 싶어 합니다. 작은 숨 곁에서도 현재의 온기를 지키되, 그 시간의 끝은 정해 두지 않습니다.",
+        read: "사람과 감각이 있는 장면에서 살아납니다. 판단은 관계의 분위기와 가치이고, 틀은 가볍게 둡니다.",
+        gift: "현장의 활력, 따뜻한 설득, 지금을 살리는 힘.",
+        edge: "위험이나 한계 같은 불편한 사실이 분위기에 덮일 수 있습니다.",
+        grow: "즐거운 자리에서도, 이 길이 짧은 이유를 한 문장 들어 둡니다."
+      },
+      ENFP: {
+        animal: "여우",
+        epithet: "다음 덤불의 빛",
+        ending: "당신은 안개 뒤의 이야기에 먼저 눈을 밝히고, 기척에게 가능성을 붙여 부릅니다. 작은 숨이 될 수 있는 쪽으로 뛰어들며, 밝아진 뒤의 길은 그 다음에 고릅니다.",
+        read: "바깥의 가능성과 존재의 잠재를 연결합니다. 가치에 따라 움직이고, 하나의 계획에 세계를 가두지 않습니다.",
+        gift: "시작의 영감, 사람과 의미의 연결.",
+        edge: "시작된 길이 여럿이면 어느 발자국도 깊어지지 않을 수 있습니다.",
+        grow: "반짝인 가능성 중 하나를 내일 아침까지 붙듭니다."
+      },
+      ENTP: {
+        animal: "너구리",
+        epithet: "잠기지 않은 문",
+        ending: "당신은 표식의 규칙을 의심하고, 두 길의 틈을 동시에 시험하고 싶어 합니다. 기척과도 질문을 주고받듯 가까워지며, 잠긴 문을 새로운 문제로 바꿉니다.",
+        read: "아이디어를 밖에서 실험하고, 논리의 빈틈을 즐깁니다. 더 좋은 질문이 오면 결론은 다시 열립니다.",
+        gift: "재치, 민첩한 재구성, 고정된 길의 해체.",
+        edge: "실험이 상대의 안정이나 약한 숨을 대상으로 삼을 수 있습니다.",
+        grow: "남기는 질문 옆에, 오늘 닫아도 되는 문 하나를 고릅니다."
+      },
+      ESTJ: {
+        animal: "늑대",
+        epithet: "무리의 첫 발",
+        ending: "당신은 기척을 향해 자신의 위치를 알리고, 보이는 단서로 위험을 가른 뒤, 설 자리와 갈 순서를 하늘이 다 밝기 전에 정합니다.",
+        read: "바깥에서 질서를 세웁니다. 구체적 사실과 논리로 결정하고, 그 결정을 역할로 고정합니다.",
+        gift: "실행, 명확한 기준, 눈에 보이는 책임.",
+        edge: "빠른 질서가 다른 존재의 박자와 가치를 늦음으로 처리할 수 있습니다.",
+        grow: "순서를 말하기 전에, 작은 숨의 속도를 기준에 한 줄 넣습니다."
+      },
+      ESFJ: {
+        animal: "코끼리",
+        epithet: "무리가 기억하는 길",
+        ending: "당신은 온기에게 먼저 다가가 안부를 확인하고, 작은 숨이 쉴 자리를 만들어 그 자리를 내일도 같은 곳에 남겨 둡니다. 기억은 함께 걷는 길을 잇습니다.",
+        read: "관계 안의 구체적인 필요를 읽고, 조화와 돌봄으로 판단하며, 모두가 기댈 구조를 만듭니다.",
+        gift: "환대, 실질적 배려, 공동체의 기억.",
+        edge: "조화를 지키려다 필요한 반대를 삼킬 수 있습니다.",
+        grow: "안심시키는 말 옆에, 사실과 다른 점 하나를 허용합니다."
+      },
+      ENFJ: {
+        animal: "말",
+        epithet: "함께 읽는 방향",
+        ending: "당신은 기척이 도달할 수 있는 아침을 먼저 그려 보고, 작은 숨과 그 아침 사이의 길을 함께 정합니다. 방향은 혼자가 아니라 옆의 걸음과 맞물려 닫힙니다.",
+        read: "밖의 세계에서 존재의 가능성을 읽고, 가치로 판단한 뒤, 다음 단계를 함께 닫아 이끕니다.",
+        gift: "북돋음, 의미 있는 조율, 방향을 나누는 힘.",
+        edge: "상대의 가능성을 상대보다 먼저 확정할 수 있습니다.",
+        grow: "그려 둔 아침을 말하기 전에, 그 숨이 원하는 밝기를 묻습니다."
+      },
+      ENTJ: {
+        animal: "사자",
+        epithet: "들판을 가르는 결단",
+        ending: "당신은 들판의 끝을 목표로 놓고, 기척을 그 목표 안의 역할로 읽습니다. 옳다고 본 길을 오늘의 방향으로 선포하고, 밝아오는 하늘을 일정으로 바꿉니다.",
+        read: "바깥에서 큰 그림을 논리로 압축하고, 자원과 순서를 배치해 결말을 닫습니다.",
+        gift: "추진, 전략적 결단, 막힌 구조의 돌파.",
+        edge: "목표의 속도에 맞지 않는 숨은 장애로 보일 수 있습니다.",
+        grow: "결단 옆에, 이 길이 지우면 안 되는 것을 한 가지 적습니다."
+      }
+    };
+
+    const state = {
+      step: 0,
+      answers: [-1, -1, -1, -1, -1, -1, -1, -1],
+      viewCode: "INFJ",
+      scoredCode: null
+    };
+
+    const els = {
+      intro: document.getElementById("intro"),
+      quiz: document.getElementById("quiz"),
+      result: document.getElementById("result"),
+      progress: document.getElementById("progress"),
+      panel: document.getElementById("quiz-panel"),
+      scene: document.getElementById("scene-label"),
+      axis: document.getElementById("axis-label"),
+      lead: document.getElementById("lead"),
+      ask: document.getElementById("ask"),
+      choices: document.getElementById("choices"),
+      prev: document.getElementById("prev-btn"),
+      resultPanel: document.getElementById("result-panel")
+    };
+
+    function show(id) {
+      els.intro.classList.toggle("hidden", id !== "intro");
+      els.quiz.classList.toggle("hidden", id !== "quiz");
+      els.result.classList.toggle("hidden", id !== "result");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function replay(node) {
+      node.classList.remove("fade");
+      void node.offsetWidth;
+      node.classList.add("fade");
+    }
+
+    function scoreAll(answers) {
+      if (answers.length !== 8 || answers.some((n) => n < 0 || n > 3)) return null;
+      let code = "";
+      const axes = [];
+      for (const axis of AXES) {
+        const early = QUESTIONS[axis.early].choices[answers[axis.early]];
+        const late = QUESTIONS[axis.late].choices[answers[axis.late]];
+        let leftPts = 0;
+        let rightPts = 0;
+        for (const choice of [early, late]) {
+          if (choice.pole === axis.left) leftPts += choice.weight;
+          else if (choice.pole === axis.right) rightPts += choice.weight;
+        }
+        const diff = Math.abs(leftPts - rightPts);
+        let letter;
+        if (leftPts > rightPts) letter = axis.left;
+        else if (rightPts > leftPts) letter = axis.right;
+        else letter = late.pole;
+        code += letter;
+        axes.push({
+          name: axis.name,
+          letter,
+          clarity: diff >= 4 ? "선명" : diff >= 2 ? "기울어짐" : "경계",
+          leftName: axis.leftName,
+          rightName: axis.rightName,
+          leftPts,
+          rightPts
+        });
+      }
+      return { code, axes };
+    }
+
+    function renderProgress() {
+      els.progress.innerHTML = QUESTIONS.map((_, i) => {
+        const cls = i === state.step ? "on" : i < state.step || state.answers[i] >= 0 ? "done" : "";
+        return `<span class="${cls}"></span>`;
+      }).join("");
+    }
+
+    function renderQuestion() {
+      const q = QUESTIONS[state.step];
+      const prevAnswer = state.step > 0 ? state.answers[state.step - 1] : -1;
+      const lead = q.leads && prevAnswer >= 0 ? q.leads[prevAnswer] : "";
+      els.scene.textContent = `장면 ${state.step + 1} / 8 · ${q.scene}`;
+      els.axis.textContent = q.axis;
+      els.ask.textContent = q.ask;
+      els.lead.textContent = lead;
+      els.lead.classList.toggle("hidden", !lead);
+      els.prev.disabled = state.step === 0;
+      els.choices.innerHTML = q.choices.map((choice, index) => {
+        const active = state.answers[state.step] === index ? " active" : "";
+        return `<button class="choice${active}" type="button" data-index="${index}"><span class="mark">${MARKS[index]}</span>${choice.text}</button>`;
+      }).join("");
+      renderProgress();
+      replay(els.panel);
+    }
+
+    function portraitHTML(code, axes, heading, scoredCode) {
+      const p = PORTRAITS[code];
+      const stats = axes ? `<div class="stats">${axes.map((axis) => `
+        <div class="stat">
+          <b>${axis.letter}</b>
+          <span>${axis.name} · ${axis.clarity} · ${axis.leftName} ${axis.leftPts} / ${axis.rightName} ${axis.rightPts}</span>
+        </div>`).join("")}</div>` : "";
+      const chips = CODES.map((c) => {
+        const mine = scoredCode && c === scoredCode ? " mine" : "";
+        const current = c === code ? " mine" : "";
+        return `<button type="button" class="${mine || current}" data-code="${c}">${PORTRAITS[c].animal}<br>${c}</button>`;
+      }).join("");
+      return `
+        <p class="eyebrow">${heading}</p>
+        <div class="portrait-head">
+          <h1 class="animal">${p.animal}</h1>
+          <p class="epithet serif">${p.epithet}</p>
+          <p class="code">${code}</p>
+        </div>
+        ${stats}
+        <div class="block">
+          <h2>아침</h2>
+          <p>${p.ending}</p>
+        </div>
+        <div class="block">
+          <h2>해석</h2>
+          <p>${p.read}</p>
+        </div>
+        <div class="list">
+          <p><strong>강점.</strong> ${p.gift}</p>
+          <p><strong>그늘.</strong> ${p.edge}</p>
+          <p><strong>다음 걸음.</strong> ${p.grow}</p>
+        </div>
+        <div class="block">
+          <h2>열여섯 결</h2>
+          <div class="animals">${chips}</div>
+        </div>
+        <div class="callout">여덟 장면의 단축입니다. 경계로 나온 축은 답 하나에 글자가 바뀔 수 있습니다. 사람을 고르거나 진단하는 도구로 쓰지 않습니다.</div>
+        <div class="nav">
+          <button class="btn primary" type="button" id="restart-btn">${scoredCode ? "처음부터" : "이야기로 돌아가기"}</button>
+          ${scoredCode ? `<button class="btn ghost" type="button" id="back-last-btn">마지막 장면</button>` : ""}
+        </div>
+      `;
+    }
+
+    function renderResult(code, axes) {
+      state.viewCode = code;
+      els.resultPanel.innerHTML = portraitHTML(code, axes, state.scoredCode ? "당신의 아침" : "이 결의 아침", state.scoredCode);
+      replay(els.resultPanel);
+      show("result");
+    }
+
+    function choose(index) {
+      state.answers[state.step] = index;
+      if (state.step >= 7) {
+        const scored = scoreAll(state.answers);
+        state.scoredCode = scored.code;
+        renderResult(scored.code, scored.axes);
+        return;
+      }
+      state.step += 1;
+      renderQuestion();
+    }
+
+    function startQuiz() {
+      state.step = 0;
+      state.answers = [-1, -1, -1, -1, -1, -1, -1, -1];
+      state.scoredCode = null;
+      renderQuestion();
+      show("quiz");
+    }
+
+    document.getElementById("start-btn").addEventListener("click", startQuiz);
+    document.getElementById("browse-btn").addEventListener("click", () => {
+      state.scoredCode = null;
+      renderResult("INFJ", null);
+    });
+    els.prev.addEventListener("click", () => {
+      if (state.step === 0) return;
+      state.step -= 1;
+      renderQuestion();
+    });
+    els.choices.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-index]");
+      if (!button) return;
+      choose(Number(button.dataset.index));
+    });
+    els.resultPanel.addEventListener("click", (event) => {
+      const chip = event.target.closest("button[data-code]");
+      if (chip) {
+        const scored = state.scoredCode ? scoreAll(state.answers) : null;
+        const code = chip.dataset.code;
+        const axes = scored && scored.code === code ? scored.axes : null;
+        els.resultPanel.innerHTML = portraitHTML(code, axes, scored && scored.code === code ? "당신의 아침" : "이 결의 아침", state.scoredCode);
+        replay(els.resultPanel);
+        return;
+      }
+      if (event.target.id === "restart-btn") {
+        if (state.scoredCode) startQuiz();
+        else show("intro");
+        return;
+      }
+      if (event.target.id === "back-last-btn") {
+        state.step = 7;
+        renderQuestion();
+        show("quiz");
+      }
+    });
+  </script>
+</body>
+</html>
